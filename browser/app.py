@@ -16,25 +16,32 @@ class Viewport:
 class BrowserApp:
     def __init__(self) -> None:
         self.root = tk.Tk()
-        self.root.title("MyBrowser")
+        self.root.title("Cowser")
         self.root.geometry("1024x720")
 
+        # Color Palette
+        self.bg_color = "#E1F5FE"  # Light Baby Blue
+        self.accent_color = "#B3E5FC"
+        self.text_color = "#01579B"
+
+        self.root.configure(bg=self.bg_color)
+
         # ===== Top UI =====
-        top = tk.Frame(self.root, bg="#f5f5f5")
+        top = tk.Frame(self.root, bg=self.bg_color)
         top.pack(fill="x")
 
         # Tab bar
-        self.tabbar = tk.Frame(top, bg="#f5f5f5")
+        self.tabbar = tk.Frame(top, bg=self.bg_color)
         self.tabbar.pack(fill="x", padx=6, pady=(6, 0))
 
         # Controls row
-        controls = tk.Frame(top, bg="#f5f5f5")
+        controls = tk.Frame(top, bg=self.bg_color)
         controls.pack(fill="x", padx=6, pady=6)
 
-        self.btn_back = tk.Button(controls, text="←", width=3, command=self.go_back)
-        self.btn_fwd = tk.Button(controls, text="→", width=3, command=self.go_forward)
-        self.btn_reload = tk.Button(controls, text="⟳", width=3, command=self.reload)
-        self.btn_home = tk.Button(controls, text="⌂", width=3, command=self.home)
+        self.btn_back = tk.Button(controls, text="←", width=3, command=self.go_back, bg=self.accent_color, fg=self.text_color, relief="flat")
+        self.btn_fwd = tk.Button(controls, text="→", width=3, command=self.go_forward, bg=self.accent_color, fg=self.text_color, relief="flat")
+        self.btn_reload = tk.Button(controls, text="⟳", width=3, command=self.reload, bg=self.accent_color, fg=self.text_color, relief="flat")
+        self.btn_home = tk.Button(controls, text="⌂", width=3, command=self.home, bg=self.accent_color, fg=self.text_color, relief="flat")
 
         self.btn_back.pack(side="left")
         self.btn_fwd.pack(side="left", padx=(4, 0))
@@ -42,18 +49,18 @@ class BrowserApp:
         self.btn_home.pack(side="left", padx=(4, 10))
 
         self.address_var = tk.StringVar(value=HOME_URL)
-        self.address = tk.Entry(controls, textvariable=self.address_var, font=("Arial", 14))
+        self.address = tk.Entry(controls, textvariable=self.address_var, font=("Segoe UI", 12), bg="white", fg=self.text_color, relief="flat", highlightthickness=1, highlightbackground=self.accent_color)
         self.address.pack(side="left", fill="x", expand=True)
         self.address.bind("<Return>", self.on_enter)
 
         self.status_var = tk.StringVar(value="")
-        self.status = tk.Label(self.root, textvariable=self.status_var, anchor="w")
+        self.status = tk.Label(self.root, textvariable=self.status_var, anchor="w", bg=self.bg_color, fg=self.text_color, font=("Segoe UI", 9))
         self.status.pack(fill="x")
 
         # ===== Canvas =====
         self.viewport = Viewport(width=1024, height=640)
         self.canvas = tk.Canvas(self.root, bg="white", highlightthickness=0)
-        self.canvas.pack(fill="both", expand=True)
+        self.canvas.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
         # Tabs
         self.tabs: list[Tab] = []
@@ -147,19 +154,44 @@ class BrowserApp:
         for i, t in enumerate(self.tabs):
             is_active = (i == self.active_index)
             txt = (t.title[:18] + "…") if len(t.title) > 19 else t.title
+            
+            tab_frame = tk.Frame(self.tabbar, bg=self.accent_color if is_active else self.bg_color)
+            tab_frame.pack(side="left", padx=2)
+
             btn = tk.Button(
-                self.tabbar,
+                tab_frame,
                 text=txt,
-                relief="sunken" if is_active else "raised",
+                relief="flat",
+                bg=self.accent_color if is_active else self.bg_color,
+                fg=self.text_color,
+                font=("Segoe UI", 10, "bold" if is_active else "normal"),
                 command=lambda j=i: self.switch_tab(j),
                 padx=8,
             )
-            btn.pack(side="left", padx=2)
+            btn.pack(side="left")
 
-            xbtn = tk.Button(self.tabbar, text="×", command=lambda j=i: self.close_tab(j), padx=6)
-            xbtn.pack(side="left", padx=(0, 6))
+            xbtn = tk.Button(
+                tab_frame, 
+                text="×", 
+                command=lambda j=i: self.close_tab(j), 
+                padx=6,
+                relief="flat",
+                bg=self.accent_color if is_active else self.bg_color,
+                fg=self.text_color,
+                font=("Segoe UI", 10)
+            )
+            xbtn.pack(side="left")
 
-        plus = tk.Button(self.tabbar, text="+", command=lambda: self.new_tab(HOME_URL), padx=10)
+        plus = tk.Button(
+            self.tabbar, 
+            text="+", 
+            command=lambda: self.new_tab(HOME_URL), 
+            padx=10,
+            relief="flat",
+            bg=self.bg_color,
+            fg=self.text_color,
+            font=("Segoe UI", 12, "bold")
+        )
         plus.pack(side="right")
 
     def active_tab(self) -> Tab:
