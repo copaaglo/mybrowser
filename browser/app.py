@@ -59,7 +59,7 @@ class BrowserApp:
         self.address.bind("<Return>", self.on_enter)
 
         self.status_var = tk.StringVar(value="")
-        self.status = tk.Label(self.root, textvariable=self.status_var, anchor="w", bg=self.bg_color, fg=self.text_color, font=("Segoe UI", 9))
+        self.status = tk.Label(self.root, textvariable=self.status_var, anchor="w", bg=self.bg_color, fg=self.text_color, font=("Segoe UI", 10))
         self.status.pack(fill="x")
 
         # ===== Canvas =====

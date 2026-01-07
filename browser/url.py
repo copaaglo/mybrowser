@@ -46,6 +46,14 @@ class URL:
 
         p = urlparse(raw)
         scheme = (p.scheme or "http").lower()
+        
+        if scheme == "file":
+            # For file URLs, we don't expect a host
+            host = ""
+            path = p.path
+            port = 0
+            return URL(scheme=scheme, host=host, port=port, path=path)
+
         host = p.hostname or ""
         if not host:
             raise ValueError(f"Invalid URL (missing host): {raw}")

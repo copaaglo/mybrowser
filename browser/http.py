@@ -21,6 +21,14 @@ USER_AGENT = "MyBrowser/1.0 (ToyBrowser; +https://browser.engineering)"
 
 
 def fetch(url: URL, max_redirects: int = 8) -> Response:
+    if url.scheme == "file":
+        try:
+            with open(url.path, "rb") as f:
+                body = f.read()
+            return Response(status=200, headers={"content-type": "text/html"}, body=body, encoding="utf-8")
+        except Exception as e:
+            return Response(status=404, headers={}, body=str(e).encode(), encoding="utf-8")
+
     cur = url
     redirects_left = max_redirects
 

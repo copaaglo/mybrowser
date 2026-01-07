@@ -28,3 +28,7 @@ args = "python run.py"
 
 [workflows.workflow.metadata]
 outputType = "vnc"
+
+[deployment]
+deploymentTarget = "vm"
+run = ["python", "run.py"]
